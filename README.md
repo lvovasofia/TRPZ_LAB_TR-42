@@ -1,2 +1,1 @@
-# TRPZ_LAB_TR-42
-Лабораторні роботи ТРПЗ
+# Energy Accounting Project
