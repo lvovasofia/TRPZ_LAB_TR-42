@@ -1,0 +1,64 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class User {
+  - email: String
+  - passwordHash: String
+  + verifyPassword(password: String): Boolean
+}
+
+class WeeklySchedule {
+  + isSlotAvailable(day: DayOfWeek, meal: MealType): Boolean
+  + addEntry(day: DayOfWeek, meal: MealType, recipe: Recipe)
+}
+
+class ScheduleEntry {
+  - day: DayOfWeek
+  - meal: MealType
+}
+
+class Recipe {
+  - name: String
+  + addIngredient(name: String, quantity: Decimal, unit: String)
+}
+
+class Ingredient {
+  - name: String
+  - quantity: Decimal
+  - unit: String
+}
+
+class ShoppingList {
+  + generate(schedule: WeeklySchedule)
+}
+
+class ShoppingListItem {
+  - name: String
+  - unit: String
+  - totalQuantity: Decimal
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+}
+
+User "1" --> "0..*" Recipe : має
+User "1" --> "1" WeeklySchedule : має
+WeeklySchedule "1" *-- "0..*" ScheduleEntry : складається з
+ScheduleEntry "0..*" --> "1" Recipe : посилається на
+Recipe "1" *-- "1..*" Ingredient : містить
+ShoppingList ..> WeeklySchedule : формується з
+ShoppingList "1" *-- "1..*" ShoppingListItem : містить
+@enduml
