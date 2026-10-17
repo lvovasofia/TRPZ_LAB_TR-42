@@ -12,7 +12,7 @@
 
 - UC-03 «Створити рецепт» (FR-05, FR-06): [model/activity-uc-03.md](../model/activity-uc-03.md);
 - UC-05 «Скласти розклад меню на тиждень» (FR-08, FR-09): [model/activity-uc-05.md](../model/activity-uc-05.md);
-- UC-07 «Згенерувати список покупок» (FR-11, FR-12): [model/activity-uc-07.md](../model/activity-uc-07.md).
+- UC-07 «Згенерувати список покупок» (FR-11, FR-12, NFR-02): [model/activity-uc-07.md](../model/activity-uc-07.md).
 
 
 ## Діаграма класів
