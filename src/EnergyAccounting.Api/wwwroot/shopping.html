@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список покупок</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f5ef;
+            margin: 0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #234b30;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #68756b;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px #00000010;
+        }
+
+        button {
+            width: 100%;
+            background: #38754b;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2b603b;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e1e8e1;
+        }
+
+        th {
+            background: #eef3ee;
+            color: #234b30;
+        }
+
+        #message {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .success {
+            color: #28743c;
+        }
+
+        .error {
+            color: #c0392b;
+        }
+
+        a {
+            color: #38754b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Список покупок</h1>
+
+        <p class="subtitle">
+            Інгредієнти для запланованих страв на тиждень
+        </p>
+
+        <div class="card">
+            <button id="generateButton">
+                Сформувати список покупок
+            </button>
+
+            <div id="message" role="status"></div>
+
+            <table id="shoppingTable" hidden>
+                <thead>
+                    <tr>
+                        <th>Інгредієнт</th>
+                        <th>Кількість</th>
+                        <th>Одиниця вимірювання</th>
+                    </tr>
+                </thead>
+
+                <tbody id="shoppingItems"></tbody>
+            </table>
+        </div>
+
+        <p>
+            <a href="/login.html">Перейти до входу</a>
+        </p>
+    </div>
+
+    <script>
+        const button =
+            document.getElementById("generateButton");
+
+        const message =
+            document.getElementById("message");
+
+        const table =
+            document.getElementById("shoppingTable");
+
+        const items =
+            document.getElementById("shoppingItems");
+
+        button.addEventListener("click", async () => {
+            button.disabled = true;
+            table.hidden = true;
+            items.replaceChildren();
+
+            message.textContent = "Завантаження...";
+            message.className = "";
+
+            try {
+                const response = await fetch(
+                    "/api/shopping-list",
+                    {
+                        method: "GET",
+                        credentials: "same-origin"
+                    }
+                );
+
+                if (response.status === 401) {
+                    message.textContent =
+                        "Спочатку увійдіть у систему.";
+
+                    message.className = "error";
+                    return;
+                }
+
+                if (response.status === 404) {
+                    message.textContent =
+                        "API списку покупок ще не підключено.";
+
+                    message.className = "error";
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    message.textContent =
+                        data.message || "Не вдалося сформувати список.";
+
+                    message.className = "error";
+                    return;
+                }
+
+                for (const item of data.items) {
+                    const row = document.createElement("tr");
+
+                    const name = document.createElement("td");
+                    name.textContent = item.name;
+
+                    const quantity = document.createElement("td");
+                    quantity.textContent =
+                        Number(item.totalQuantity).toLocaleString(
+                            "uk-UA",
+                            {
+                                minimumFractionDigits: 3,
+                                maximumFractionDigits: 3
+                            }
+                        );
+
+                    const unit = document.createElement("td");
+                    unit.textContent = item.unit;
+
+                    row.append(name, quantity, unit);
+                    items.appendChild(row);
+                }
+
+                table.hidden = false;
+                message.textContent = data.message;
+                message.className = "success";
+
+            } catch (error) {
+                message.textContent =
+                    "Не вдалося отримати відповідь сервера.";
+
+                message.className = "error";
+
+            } finally {
+                button.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
