@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рецепти</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f5ef;
+            margin: 0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #234b30;
+            text-align: center;
+        }
+
+        h2 {
+            color: #234b30;
+            margin-top: 0;
+        }
+
+        .subtitle {
+            color: #68756b;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px #00000010;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #234b30;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cdd8cd;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .ingredient-row {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr auto;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .ingredient-row button {
+            width: auto;
+            padding: 10px 14px;
+        }
+
+        button {
+            width: 100%;
+            background: #38754b;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2b603b;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        button.secondary {
+            background: #e4ece4;
+            color: #234b30;
+            margin: 8px 0 16px;
+        }
+
+        .recipe {
+            border-bottom: 1px solid #e1e8e1;
+            padding: 12px 0;
+        }
+
+        .recipe:last-child {
+            border-bottom: none;
+        }
+
+        .recipe h3 {
+            margin: 0 0 6px;
+            color: #234b30;
+        }
+
+        .recipe ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        #message {
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .success {
+            color: #28743c;
+        }
+
+        .error {
+            color: #c0392b;
+        }
+
+        a {
+            color: #38754b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Рецепти</h1>
+
+        <p class="subtitle">
+            Створіть рецепт і перегляньте свій довідник
+        </p>
+
+        <div class="card">
+            <h2>Новий рецепт</h2>
+
+            <form id="recipeForm" novalidate>
+                <label for="recipeName">Назва рецепта</label>
+                <input id="recipeName" type="text" autocomplete="off">
+
+                <p></p>
+                <label>Інгредієнти</label>
+                <div id="ingredientRows"></div>
+
+                <button type="button" id="addIngredient" class="secondary">
+                    Додати інгредієнт
+                </button>
+
+                <button type="submit" id="saveButton">
+                    Зберегти рецепт
+                </button>
+            </form>
+
+            <div id="message" role="status"></div>
+        </div>
+
+        <div class="card">
+            <h2>Мій довідник</h2>
+            <div id="recipeList"></div>
+        </div>
+
+        <p>
+            <a href="/login.html">Перейти до входу</a>
+            |
+            <a href="/shopping.html">Список покупок</a>
+        </p>
+    </div>
+
+    <script>
+        const form = document.getElementById("recipeForm");
+        const nameInput = document.getElementById("recipeName");
+        const rows = document.getElementById("ingredientRows");
+        const addButton = document.getElementById("addIngredient");
+        const saveButton = document.getElementById("saveButton");
+        const message = document.getElementById("message");
+        const list = document.getElementById("recipeList");
+
+        function showMessage(text, isError) {
+            message.textContent = text;
+            message.className = isError ? "error" : "success";
+        }
+
+        function addRow() {
+            const row = document.createElement("div");
+            row.className = "ingredient-row";
+
+            const name = document.createElement("input");
+            name.type = "text";
+            name.placeholder = "Назва";
+            name.className = "ing-name";
+
+            const quantity = document.createElement("input");
+            quantity.type = "text";
+            quantity.inputMode = "decimal";
+            quantity.placeholder = "Кількість";
+            quantity.className = "ing-quantity";
+
+            const unit = document.createElement("input");
+            unit.type = "text";
+            unit.placeholder = "Одиниця";
+            unit.className = "ing-unit";
+
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.textContent = "×";
+            remove.title = "Прибрати рядок";
+            remove.addEventListener("click", () => {
+                if (rows.children.length > 1) {
+                    row.remove();
+                }
+            });
+
+            row.append(name, quantity, unit, remove);
+            rows.appendChild(row);
+        }
+
+        // Перетворює текст кількості на число. Некоректний текст
+        // передаємо як є, щоб сервер повернув повідомлення про помилку.
+        function parseQuantity(text) {
+            const normalized = text.trim().replace(",", ".");
+
+            if (normalized === "") {
+                return null;
+            }
+
+            const value = Number(normalized);
+
+            return Number.isNaN(value) ? normalized : value;
+        }
+
+        function collectIngredients() {
+            return Array.from(rows.children).map(row => ({
+                name: row.querySelector(".ing-name").value,
+                quantity: parseQuantity(
+                    row.querySelector(".ing-quantity").value),
+                unit: row.querySelector(".ing-unit").value
+            }));
+        }
+
+        function renderRecipes(recipes) {
+            list.replaceChildren();
+
+            if (recipes.length === 0) {
+                const empty = document.createElement("p");
+                empty.textContent = "Довідник порожній.";
+                list.appendChild(empty);
+                return;
+            }
+
+            for (const recipe of recipes) {
+                const block = document.createElement("div");
+                block.className = "recipe";
+
+                const title = document.createElement("h3");
+                title.textContent = recipe.name;
+
+                const ul = document.createElement("ul");
+
+                for (const item of recipe.ingredients) {
+                    const li = document.createElement("li");
+                    li.textContent =
+                        item.name + " — " + item.quantity + " " + item.unit;
+                    ul.appendChild(li);
+                }
+
+                block.append(title, ul);
+                list.appendChild(block);
+            }
+        }
+
+        async function loadRecipes() {
+            try {
+                const response = await fetch("/api/recipes", {
+                    method: "GET",
+                    credentials: "same-origin"
+                });
+
+                if (response.status === 401) {
+                    list.textContent = "Спочатку увійдіть у систему.";
+                    return;
+                }
+
+                renderRecipes(await response.json());
+            } catch (error) {
+                list.textContent = "Не вдалося отримати довідник.";
+            }
+        }
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            saveButton.disabled = true;
+            showMessage("Збереження...", false);
+
+            try {
+                const response = await fetch("/api/recipes", {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        name: nameInput.value,
+                        ingredients: collectIngredients()
+                    })
+                });
+
+                if (response.status === 401) {
+                    showMessage("Спочатку увійдіть у систему.", true);
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showMessage(
+                        data.message || "Не вдалося зберегти рецепт.", true);
+                    return;
+                }
+
+                showMessage("Рецепт успішно створено.", false);
+                nameInput.value = "";
+                rows.replaceChildren();
+                addRow();
+                await loadRecipes();
+            } catch (error) {
+                showMessage("Не вдалося отримати відповідь сервера.", true);
+            } finally {
+                saveButton.disabled = false;
+            }
+        });
+
+        addButton.addEventListener("click", addRow);
+
+        addRow();
+        loadRecipes();
+    </script>
+</body>
+</html>
