@@ -234,9 +234,12 @@
                     message.className =
                         response.ok ? "success" : "error";
 
+                  
                     if (response.ok) {
-                        document.getElementById("password").value = "";
-                    }
+    document.getElementById("password").value = "";
+    window.location.replace("/recipes.html");
+    return;
+}
                 } catch (error) {
                     message.textContent =
                         "Не вдалося отримати відповідь сервера.";
