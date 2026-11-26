@@ -121,34 +121,11 @@
         a {
             color: #38754b;
         }
-
-        /* Меню навігації між сторінками */
-        .nav {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-            .nav a {
-                text-decoration: none;
-                font-weight: bold;
-            }
-
-                .nav a.active {
-                    color: #234b30;
-                    border-bottom: 2px solid #234b30;
-                }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <nav class="nav">
-            <a href="/recipes.html">Рецепти</a>
-            <a href="/schedule.html" class="active">Розклад</a>
-            <a href="/shopping.html">Список покупок</a>
-        </nav>
 
         <h1>Розклад меню</h1>
 
@@ -210,11 +187,6 @@
         const message = document.getElementById("message");
         const table = document.getElementById("scheduleTable");
 
-        // Не увійшла (401) — одразу на сторінку входу.
-        function goToLogin() {
-            window.location.href = "/login.html";
-        }
-
         function showMessage(text, isError) {
             message.textContent = text;
             message.className = isError ? "error" : "success";
@@ -240,7 +212,7 @@
                 });
 
                 if (response.status === 401) {
-                    goToLogin();
+                    // Не увійшла: форма лишається як є, повідомлення з'явиться після натискання «Додати».
                     return;
                 }
 
@@ -317,7 +289,7 @@
                 });
 
                 if (response.status === 401) {
-                    goToLogin();
+                    table.textContent = "Спочатку увійдіть у систему.";
                     return;
                 }
 
@@ -346,7 +318,7 @@
                 });
 
                 if (response.status === 401) {
-                    goToLogin();
+                    showMessage("Спочатку увійдіть у систему.", true);
                     return;
                 }
 
@@ -365,7 +337,7 @@
             } catch (error) {
                 showMessage("Не вдалося отримати відповідь сервера.", true);
             } finally {
-                addButton.disabled = recipeSelect.options.length === 0;
+                addButton.disabled = false;
             }
         });
 
