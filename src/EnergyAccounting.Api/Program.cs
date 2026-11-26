@@ -12,6 +12,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddSingleton<AuthService>();
 builder.Services.AddSingleton<ShoppingListService>();
 builder.Services.AddSingleton<RecipeService>();
+builder.Services.AddSingleton<ScheduleService>();
 
 
 builder.Services
@@ -77,6 +78,7 @@ app.UseAuthorization();
 app.MapAuthEndpoints();
 app.MapShoppingListEndpoints();
 app.MapRecipeEndpoints();
+app.MapScheduleEndpoints();
 
 app.Run();
 public partial class Program { }
