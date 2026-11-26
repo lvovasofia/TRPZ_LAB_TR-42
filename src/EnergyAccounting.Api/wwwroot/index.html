@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Планувальник харчування</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f0f5ef;
+        }
+
+        header {
+            background: #234b30;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 15px;
+            background: white;
+        }
+
+        nav button {
+            background: #e4ece4;
+            color: #234b30;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        nav button:hover,
+        nav button.active {
+            background: #38754b;
+            color: white;
+        }
+
+        iframe {
+            display: block;
+            width: 100%;
+            height: 80vh;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Планувальник харчування</h1>
+        <p>Плануй страви та покупки на тиждень</p>
+    </header>
+
+    <nav>
+        <button class="active"
+                onclick="openPage('login.html', this)">
+            Вхід / Реєстрація
+        </button>
+
+        <button onclick="openPage('recipes.html', this)">
+            Рецепти
+        </button>
+
+        <button onclick="openPage('schedule.html', this)">
+            Розклад
+        </button>
+
+        <button onclick="openPage('shopping.html', this)">
+            Список покупок
+        </button>
+    </nav>
+
+    <iframe id="content"
+            src="login.html"
+            title="Планувальник харчування">
+    </iframe>
+
+    <script>
+        function openPage(page, button) {
+            document.getElementById("content").src = page;
+
+            document.querySelectorAll("nav button")
+                .forEach(item => {
+                    item.classList.remove("active");
+                });
+
+            button.classList.add("active");
+        }
+
+        document.getElementById("content")
+            .addEventListener("load", function () {
+                const page = this.contentWindow.location
+                    .pathname.split("/").pop();
+
+                document.querySelectorAll("nav button")
+                    .forEach(button => {
+                        button.classList.toggle(
+                            "active",
+                            button.getAttribute("onclick")
+                                .includes("'" + page + "'")
+                        );
+                    });
+            });
+    </script>
+
+</body>
+</html>
