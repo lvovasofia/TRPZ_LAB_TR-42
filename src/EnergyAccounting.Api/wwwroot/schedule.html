@@ -187,13 +187,6 @@
         const message = document.getElementById("message");
         const table = document.getElementById("scheduleTable");
 
-        // Не увійшла (401): показуємо повідомлення, форма недоступна.
-        function showLoginRequired() {
-            showMessage("Спочатку увійдіть у систему.", true);
-            addButton.disabled = true;
-            table.textContent = "Розклад буде доступний після входу.";
-        }
-
         function showMessage(text, isError) {
             message.textContent = text;
             message.className = isError ? "error" : "success";
@@ -219,7 +212,7 @@
                 });
 
                 if (response.status === 401) {
-                    showLoginRequired();
+                    // Не увійшла: форма лишається як є, повідомлення з'явиться після натискання «Додати».
                     return;
                 }
 
@@ -296,7 +289,7 @@
                 });
 
                 if (response.status === 401) {
-                    showLoginRequired();
+                    table.textContent = "Спочатку увійдіть у систему.";
                     return;
                 }
 
@@ -325,7 +318,7 @@
                 });
 
                 if (response.status === 401) {
-                    showLoginRequired();
+                    showMessage("Спочатку увійдіть у систему.", true);
                     return;
                 }
 
@@ -344,7 +337,7 @@
             } catch (error) {
                 showMessage("Не вдалося отримати відповідь сервера.", true);
             } finally {
-                addButton.disabled = recipeSelect.options.length === 0;
+                addButton.disabled = false;
             }
         });
 
