@@ -13,6 +13,9 @@ builder.Services.AddSingleton<AuthService>();
 builder.Services.AddSingleton<ShoppingListService>();
 builder.Services.AddSingleton<RecipeService>();
 builder.Services.AddSingleton<ScheduleService>();
+builder.Services.AddSingleton<ScheduleService>();
+builder.Services.AddSingleton<IShoppingIngredientSource>(
+    sp => sp.GetRequiredService<ScheduleService>()); 
 
 
 builder.Services

@@ -3,7 +3,7 @@ using EnergyAccounting.Api.Models;
 
 namespace EnergyAccounting.Api.Services;
 
-public class ScheduleService(RecipeService recipes)
+public class ScheduleService(RecipeService recipes) : IShoppingIngredientSource
 {
     private readonly Dictionary<Guid, WeeklySchedule> _schedules = new();
     private readonly object _lock = new();
@@ -69,6 +69,23 @@ public class ScheduleService(RecipeService recipes)
                 .OrderBy(e => ((int)e.Day + 6) % 7)   
                 .ThenBy(e => e.Meal)
                 .Select(ToDto)
+                .ToList();
+        }
+    }
+
+
+    public IReadOnlyCollection<ShoppingIngredient> GetIngredients(Guid userId)
+    {
+        lock (_lock)
+        {
+            if (!_schedules.TryGetValue(userId, out var schedule))
+            {
+                return Array.Empty<ShoppingIngredient>();
+            }
+
+            return schedule.Entries
+                .SelectMany(entry => entry.Recipe.Ingredients)
+                .Select(i => new ShoppingIngredient(i.Name, i.Quantity, i.Unit))
                 .ToList();
         }
     }
