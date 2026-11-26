@@ -121,34 +121,11 @@
         a {
             color: #38754b;
         }
-
-        /* Меню навігації між сторінками */
-        .nav {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-            .nav a {
-                text-decoration: none;
-                font-weight: bold;
-            }
-
-                .nav a.active {
-                    color: #234b30;
-                    border-bottom: 2px solid #234b30;
-                }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <nav class="nav">
-            <a href="/recipes.html">Рецепти</a>
-            <a href="/schedule.html" class="active">Розклад</a>
-            <a href="/shopping.html">Список покупок</a>
-        </nav>
 
         <h1>Розклад меню</h1>
 
@@ -210,9 +187,11 @@
         const message = document.getElementById("message");
         const table = document.getElementById("scheduleTable");
 
-        // Не увійшла (401) — одразу на сторінку входу.
-        function goToLogin() {
-            window.location.href = "/login.html";
+        // Не увійшла (401): показуємо повідомлення, форма недоступна.
+        function showLoginRequired() {
+            showMessage("Спочатку увійдіть у систему.", true);
+            addButton.disabled = true;
+            table.textContent = "Розклад буде доступний після входу.";
         }
 
         function showMessage(text, isError) {
@@ -240,7 +219,7 @@
                 });
 
                 if (response.status === 401) {
-                    goToLogin();
+                    showLoginRequired();
                     return;
                 }
 
@@ -317,7 +296,7 @@
                 });
 
                 if (response.status === 401) {
-                    goToLogin();
+                    showLoginRequired();
                     return;
                 }
 
@@ -346,7 +325,7 @@
                 });
 
                 if (response.status === 401) {
-                    goToLogin();
+                    showLoginRequired();
                     return;
                 }
 
