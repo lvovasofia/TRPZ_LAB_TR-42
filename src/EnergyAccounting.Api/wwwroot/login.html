@@ -1,254 +1,258 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Планувальник харчування</title>
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
+      * {
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #f0f5ef;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background: #f0f5ef;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
-        .container {
-            width: 100%;
-            max-width: 420px;
-            padding: 20px;
-        }
+      .container {
+        width: 100%;
+        max-width: 420px;
+        padding: 20px;
+      }
 
-        h1 {
-            color: #234b30;
-            text-align: center;
-            font-size: 28px;
-        }
+      h1 {
+        color: #234b30;
+        text-align: center;
+        font-size: 28px;
+      }
 
-        .subtitle {
-            text-align: center;
-            color: #68756b;
-            margin-bottom: 25px;
-        }
+      .subtitle {
+        text-align: center;
+        color: #68756b;
+        margin-bottom: 25px;
+      }
 
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 5px 20px #00000010;
-        }
+      .card {
+        background: white;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 5px 20px #00000010;
+      }
 
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+      .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
 
-        button {
-            border: none;
-            border-radius: 8px;
-            padding: 12px;
-            cursor: pointer;
-            font-size: 15px;
-        }
+      button {
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        cursor: pointer;
+        font-size: 15px;
+      }
 
-        .tab {
-            flex: 1;
-            background: #eef3ee;
-            color: #38754b;
-        }
+      .tab {
+        flex: 1;
+        background: #eef3ee;
+        color: #38754b;
+      }
 
-        .tab.active {
-            background: #38754b;
-            color: white;
-        }
+      .tab.active {
+        background: #38754b;
+        color: white;
+      }
 
-        h2 {
-            color: #234b30;
-        }
+      h2 {
+        color: #234b30;
+      }
 
-        label {
-            display: block;
-            margin-bottom: 6px;
-            color: #333;
-        }
+      label {
+        display: block;
+        margin-bottom: 6px;
+        color: #333;
+      }
 
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 16px;
-            border: 1px solid #ccd5cc;
-            border-radius: 8px;
-            font-size: 15px;
-        }
+      input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 16px;
+        border: 1px solid #ccd5cc;
+        border-radius: 8px;
+        font-size: 15px;
+      }
 
-        .submit {
-            width: 100%;
-            background: #38754b;
-            color: white;
-        }
+      .submit {
+        width: 100%;
+        background: #38754b;
+        color: white;
+      }
 
-        .submit:hover {
-            background: #2b603b;
-        }
+      .submit:hover {
+        background: #2b603b;
+      }
 
-        #message {
-            margin-top: 15px;
-            text-align: center;
-            overflow-wrap: anywhere;
-        }
+      #message {
+        margin-top: 15px;
+        text-align: center;
+        overflow-wrap: anywhere;
+      }
 
-        .success {
-            color: #28743c;
-        }
+      .success {
+        color: #28743c;
+      }
 
-        .error {
-            color: #c0392b;
-        }
+      .error {
+        color: #c0392b;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="container">
-        <h1>Планувальник харчування</h1>
+      <h1>Планувальник харчування</h1>
 
-        <p class="subtitle">
-            Плануй страви та покупки на тиждень
-        </p>
+      <p class="subtitle">Плануй страви та покупки на тиждень</p>
 
-        <div class="card">
-            <div class="tabs">
-                <button id="loginTab"
-                        class="tab active"
-                        onclick="setMode('login')">
-                    Вхід
-                </button>
+      <div class="card">
+        <div class="tabs">
+          <button id="loginTab" class="tab active" onclick="setMode('login')">
+            Вхід
+          </button>
 
-                <button id="registerTab"
-                        class="tab"
-                        onclick="setMode('register')">
-                    Реєстрація
-                </button>
-            </div>
-
-            <h2 id="formTitle">Вхід у систему</h2>
-
-            <form id="authForm">
-                <label for="email">Електронна пошта</label>
-                <input id="email"
-                       type="email"
-                       placeholder="example@gmail.com"
-                       autocomplete="email"
-                       required>
-
-                <label for="password">Пароль</label>
-                <input id="password"
-                       type="password"
-                       placeholder="Введіть пароль"
-                       autocomplete="current-password"
-                       required>
-
-                <button id="submitButton"
-                        class="submit"
-                        type="submit">
-                    Увійти
-                </button>
-            </form>
-
-            <div id="message" role="status"></div>
+          <button id="registerTab" class="tab" onclick="setMode('register')">
+            Реєстрація
+          </button>
         </div>
+
+        <h2 id="formTitle">Вхід у систему</h2>
+
+        <form id="authForm">
+          <label for="email">Електронна пошта</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="example@gmail.com"
+            autocomplete="email"
+            required
+          />
+
+          <label for="password">Пароль</label>
+          <input
+            id="password"
+            type="password"
+            placeholder="Введіть пароль"
+            autocomplete="current-password"
+            required
+          />
+
+          <button id="submitButton" class="submit" type="submit">Увійти</button>
+        </form>
+
+        <div id="message" role="status"></div>
+      </div>
     </div>
 
     <script>
-        let mode = "login";
+              let mode = "login";
 
-        function setMode(newMode) {
-            mode = newMode;
+              function setMode(newMode) {
+                  mode = newMode;
 
-            const isLogin = mode === "login";
+                  const isLogin = mode === "login";
 
-            document.getElementById("formTitle").textContent =
-                isLogin ? "Вхід у систему" : "Реєстрація";
+                  document.getElementById("formTitle").textContent =
+                      isLogin ? "Вхід у систему" : "Реєстрація";
 
-            document.getElementById("submitButton").textContent =
-                isLogin ? "Увійти" : "Зареєструватися";
+                  document.getElementById("submitButton").textContent =
+                      isLogin ? "Увійти" : "Зареєструватися";
 
-            document.getElementById("loginTab")
-                .classList.toggle("active", isLogin);
+                  document.getElementById("loginTab")
+                      .classList.toggle("active", isLogin);
 
-            document.getElementById("registerTab")
-                .classList.toggle("active", !isLogin);
+                  document.getElementById("registerTab")
+                      .classList.toggle("active", !isLogin);
 
-            document.getElementById("password").autocomplete =
-                isLogin ? "current-password" : "new-password";
+                  document.getElementById("password").autocomplete =
+                      isLogin ? "current-password" : "new-password";
 
-            document.getElementById("message").textContent = "";
-        }
+                  document.getElementById("message").textContent = "";
+              }
 
-        document.getElementById("authForm")
-            .addEventListener("submit", async function (event) {
-                event.preventDefault();
+              document.getElementById("authForm")
+                  .addEventListener("submit", async function (event) {
+                      event.preventDefault();
 
-                const email =
-                    document.getElementById("email").value;
+                      const email =
+                          document.getElementById("email").value;
 
-                const password =
-                    document.getElementById("password").value;
+                      const password =
+                          document.getElementById("password").value;
 
-                const message =
-                    document.getElementById("message");
+                      const message =
+                          document.getElementById("message");
 
-                const button =
-                    document.getElementById("submitButton");
+                      const button =
+                          document.getElementById("submitButton");
 
-                const requestMode = mode;
-                button.disabled = true;
+                      const requestMode = mode;
+                      button.disabled = true;
 
-                try {
-                    const response = await fetch(
-                        `/api/auth/${requestMode}`,
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            credentials: "same-origin",
-                            body: JSON.stringify({
-                                email,
-                                password
-                            })
-                        }
-                    );
+                      try {
+                          const response = await fetch(
+                              `/api/auth/${requestMode}`,
+                              {
+                                  method: "POST",
+                                  headers: {
+                                      "Content-Type": "application/json"
+                                  },
+                                  credentials: "same-origin",
+                                  body: JSON.stringify({
+                                      email,
+                                      password
+                                  })
+                              }
+                          );
 
-                    const data = await response.json();
+                          const data = await response.json();
 
-                    message.textContent = data.message;
-                    message.className =
-                        response.ok ? "success" : "error";
+                          message.textContent = data.message;
+                          message.className =
+                              response.ok ? "success" : "error";
 
-                  
-                    if (response.ok) {
-    document.getElementById("password").value = "";
-    window.location.replace("/recipes.html");
-    return;
-}
-                } catch (error) {
-                    message.textContent =
-                        "Не вдалося отримати відповідь сервера.";
+                      if (response.ok) {
+          document.getElementById("password").value = "";
 
-                    message.className = "error";
-                } finally {
-                    button.disabled = false;
-                }
-            });
+          if (requestMode === "login") {
+              window.location.replace("/recipes.html");
+              return;
+          }
+
+          if (requestMode === "register") {
+              setMode("login");
+
+              message.textContent =
+                  "Реєстрація успішна. Тепер увійдіть у систему.";
+
+              message.className = "success";
+          }
+      }
+                      } catch (error) {
+                          message.textContent =
+                              "Не вдалося отримати відповідь сервера.";
+
+                          message.className = "error";
+                      } finally {
+                          button.disabled = false;
+                      }
+                  });
     </script>
-</body>
+  </body>
 </html>
